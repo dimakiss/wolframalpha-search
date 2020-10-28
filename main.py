@@ -1,7 +1,7 @@
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-import timeit,time
+import time
 from datetime import datetime
 
 def isLoadedByXpath(driver,xpath):
@@ -14,8 +14,9 @@ def deleteByXpath(driver,xpath):
     try:
         delelement = driver.find_element_by_xpath(xpath)
         driver.execute_script("""var element = arguments[0]; element.parentNode.removeChild(element); """, delelement)
+        return delelement.size["height"]
     except:
-        pass
+        return 0
 def get_screen_shot(driver,url):
     driver.get(url)
 
@@ -27,18 +28,25 @@ def get_screen_shot(driver,url):
     #   pass
     # driver.save_screenshot("sc_"+str(count)+".png")
     while (
-    isLoadedByXpath(driver,'//*[@id="__next"]/div/div/main/div[2]/div/div/div[1]/section/div')) != True and isLoadedByXpath(
+    isLoadedByXpath(driver,'//*[@id="__next"]/div/div/main/div[2]/div/div/section/header')) != True and isLoadedByXpath(
             driver,'//*[@id="__next"]/div/div/main/div[2]/div/div/section') != True:
         pass
-    time.sleep(12)
-    deleteByXpath(driver,'//*[@id="__next"]/div/div/main/div[2]/div/div/div[1]/section/div/div')
-    deleteByXpath(driver,'//*[@id="__next"]/div/div/main/div[2]/div/div/section')
-    deleteByXpath(driver,'//*[@id="__next"]/div/div/main/div[2]/div/div/div[2]')
-    deleteByXpath(driver, '//*[@id="__next"]/div/footer')
-    deleteByXpath(driver, '//*[@id="__next"]/div/section')
+    time.sleep(10)
+    size=0
+    size+=deleteByXpath(driver, '//*[@id="__next"]/div/div/main/a')
+    size+=deleteByXpath(driver, '//*[@id="__next"]/div/header')
+
+    size+=deleteByXpath(driver,'//*[@id="__next"]/div/div/main/div[2]/div/div/div[1]/section/div/div')
+    size+=deleteByXpath(driver,'//*[@id="__next"]/div/div/main/div[2]/div/div/section')
+    size+=deleteByXpath(driver,'//*[@id="__next"]/div/div/main/div[2]/div/div/div[2]')
+    size+=deleteByXpath(driver, '//*[@id="__next"]/div/footer')
+    size+=deleteByXpath(driver, '//*[@id="__next"]/div/section')
+
+
     # the element with longest height on page
+    time.sleep(1)
     ele = driver.find_element("xpath", '//*[@id="__next"]/div/div/main')
-    total_height = ele.size["height"]+300
+    total_height = ele.size["height"]-size
     driver.set_window_size(800, total_height)  # the trick
     if driver.find_elements_by_xpath('//*[@id="__next"]/div/div/div/div/img')!=[] or driver.find_elements_by_xpath("//*[contains(text(), 'Try another server')]")!=[]:
         driver.back()
@@ -46,10 +54,10 @@ def get_screen_shot(driver,url):
     if driver.find_elements_by_xpath('//*[@id="__next"]/div/div/div/div/img')!=[] or driver.find_elements_by_xpath("//*[contains(text(), 'Try another server')]")!=[]:
         raise
     driver.save_screenshot("sc_"+str(count)+".png")
-    driver.close()
+    #driver.close()
 
 count=1
-text_for_wolfram_alpha="integral of tanx/(tanx^2 +1)"
+text_for_wolfram_alpha="integral of tan(x^2)"
 
 
 while(True):
