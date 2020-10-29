@@ -40,13 +40,16 @@ def search(driver, url,text_for_wolfram_alpha,image_name):
     # the element with longest height on page
     ele = driver.find_element("xpath", '//*[@id="__next"]/div/div/main')
     total_height = min(ele.size["height"]-size,2160) # You can change the default max height which is 2160
-    #driver.set_window_size(1280 , wanted_height)  # the trick
+    #If you want to get the whole page use total_height=ele.size["height"]-size instead
     driver.set_window_size(1280,total_height)  # the trick
+    
+    #Site Error handling
     if driver.find_elements_by_xpath('//*[@id="__next"]/div/div/div/div/img')!=[] or driver.find_elements_by_xpath("//*[contains(text(), 'Try another server')]")!=[]:
         driver.back()
         time.sleep(5)
     if driver.find_elements_by_xpath('//*[@id="__next"]/div/div/div/div/img')!=[] or driver.find_elements_by_xpath("//*[contains(text(), 'Try another server')]")!=[]:
         raise
+        
     driver.save_screenshot(image_name)
     driver.close()
 
