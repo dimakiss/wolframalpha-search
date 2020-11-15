@@ -11,7 +11,7 @@ pip install -r requirements.txt
 ## Usage
 
 ```
-python wolframalpha.py "text"
+python wolframalpha.py [text]
 ```
 
 ![](wolfram.gif)
